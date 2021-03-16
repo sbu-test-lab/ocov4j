@@ -43,13 +43,18 @@ public class OCoverageCalculationCommand implements Callable<Integer> {
     }
 
     public Integer callPolyObjectCoverage() {
-        //check preconditionS
+        //check preconditions
         if (!polyConfigFile.exists()) {
             System.out.println("ERROR: for calculating poly-coverage you should specify a config file contains class names and corresponding coverage csv files => " + polyConfigFile.getPath() + " dose not exist");
             return 1;
         }
         if (classNames == null || classNames.length == 0) {
             System.out.println("ERROR: You should specify at least one class file as a base class for calculating poly-coverage ");
+            return 1;
+        }
+
+        if (!allCoverableFile.exists()) {
+            System.out.println("ERROR: coverable items csv file for class "+classNames[0] +" dose not exist =>" + allCoverableFile.getPath());
             return 1;
         }
 
@@ -65,7 +70,7 @@ public class OCoverageCalculationCommand implements Callable<Integer> {
 
         //check each class file exists
         for (File coverageFile : classToCoverageFile.values())
-            if (!coveredFile.exists()) {
+            if (!coverageFile.exists()) {
                 System.out.println("ERROR: one of coverage file specified in config file dose not exist => " + coverageFile.getPath());
                 return 1;
             }
@@ -79,19 +84,20 @@ public class OCoverageCalculationCommand implements Callable<Integer> {
         int numberOfChildClass = 0;
         for (Map.Entry<String, File> classFileTuple : classToCoverageFile.entrySet()) {
             try {
-                String objectName=classFileTuple.getKey();
-                oCoverageCalculator = new OCoverageCalculator(allCoverableFile, classFileTuple.getValue());
-                if(!oCoverageCalculator.isObjectVisitedABaseClass(objectName,baseClassName))
+                String objectClassName=classFileTuple.getKey();
+                File objectCoverageFile=classFileTuple.getValue();
+                oCoverageCalculator = new OCoverageCalculator(allCoverableFile, objectCoverageFile);
+                if(!oCoverageCalculator.isObjectVisitedABaseClass(objectClassName,baseClassName))
                     continue;
-                result += oCoverageCalculator.getPolyObjectCoverageUsingJustAnObjectWithABaseClass(classFileTuple.getKey(), baseClassName);
+                result += oCoverageCalculator.getPolyObjectCoverageUsingJustAnObjectWithABaseClass(objectClassName, baseClassName);
                 numberOfChildClass++;
 
                 if(descendentClasses.length()>0) {
                     descendentClasses.append(", ");
                     descendentClassesWithoutNamespace.append(", ");
                 }
-                descendentClasses.append(objectName);
-                descendentClassesWithoutNamespace.append(withoutNamespace(objectName));
+                descendentClasses.append(objectClassName);
+                descendentClassesWithoutNamespace.append(withoutNamespace(objectClassName));
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -113,9 +119,12 @@ public class OCoverageCalculationCommand implements Callable<Integer> {
         textResult.append(System.lineSeparator());
         textResult.append("descendents class (namespaced): "+descendentClasses.toString());
 
+        //console the result
+        System.out.println(textResult.toString());
+
         //save final result to file
         try (PrintStream out = new PrintStream(new FileOutputStream("poly-coverage-result.txt"))) {
-
+            out.println(textResult.toString());
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.out.println("ERROR: an error occurred through writing text result to file");
@@ -228,7 +237,7 @@ public class OCoverageCalculationCommand implements Callable<Integer> {
     }
 
     private String withoutNamespace(String objectName) {
-        return objectName.substring(objectName.lastIndexOf(".")+1,objectName.length()-1);
+        return objectName.substring(objectName.lastIndexOf(".")+1,objectName.length());
     }
 
 }
