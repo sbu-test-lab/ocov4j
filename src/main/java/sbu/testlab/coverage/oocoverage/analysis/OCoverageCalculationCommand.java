@@ -12,7 +12,7 @@ import java.util.concurrent.Callable;
 
 @CommandLine.Command
 public class OCoverageCalculationCommand implements Callable<Integer> {
-    public static final String POLY_FILE = "poly.csv";
+    public static final String POLY_FILE = "poly-config.txt";
 
     final File TEMP_DIRECTORY = new File(".temp");
 
@@ -43,7 +43,7 @@ public class OCoverageCalculationCommand implements Callable<Integer> {
     }
 
     public Integer callPolyObjectCoverage() {
-        //check precondition
+        //check preconditionS
         if (!polyConfigFile.exists()) {
             System.out.println("ERROR: for calculating poly-coverage you should specify a config file contains class names and corresponding coverage csv files => " + polyConfigFile.getPath() + " dose not exist");
             return 1;
@@ -56,7 +56,7 @@ public class OCoverageCalculationCommand implements Callable<Integer> {
         //read poly config file
         Map<String, File> classToCoverageFile = null;
         try {
-            classToCoverageFile = readFromCSV(polyConfigFile, ",");
+            classToCoverageFile = readFromCSV(polyConfigFile, ":");
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("ERROR: An exception occurred through reading poly config file");
@@ -221,7 +221,7 @@ public class OCoverageCalculationCommand implements Callable<Integer> {
                 if ("".equals(line.trim()))
                     continue;
                 String[] classAndFile = line.split(splitter);
-                result.put(classAndFile[0].trim(), new File(classAndFile[0].trim()));
+                result.put(classAndFile[0].trim(), new File(classAndFile[1].trim()));
             }
         }
         return result;

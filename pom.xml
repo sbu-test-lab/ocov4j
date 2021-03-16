@@ -5,29 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>sbu.testlab.coverage</groupId>
-    <artifactId>oo-coverage</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <artifactId>ocov4j</artifactId>
+    <version>1.0.4</version>
+
+    <packaging>jar</packaging>
+    <name>Java agent for instrument your code to obtain oo-coverage data</name>
 
     <dependencies>
-    <!-- https://mvnrepository.com/artifact/javassist/javassist -->
-        <!-- https://mvnrepository.com/artifact/javassist/javassist -->
-<!--        <dependency>-->
-<!--            <groupId>javassist</groupId>-->
-<!--            <artifactId>javassist</artifactId>-->
-<!--            <version>3.20.1.GA</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
@@ -38,13 +22,71 @@
             <artifactId>asm-util</artifactId>
             <version>6.0</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.11</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>30.0-jre</version>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.12</version>
+        </dependency>
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+            <version>4.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.massisframework</groupId>
+            <artifactId>j-text-utils</artifactId>
+            <version>0.3.4</version>
+        </dependency>
     </dependencies>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <finalName>ocov4j</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <archive>
+                        <manifestEntries>
+                            <Premain-Class>sbu.testlab.coverage.oocoverage.JavaInstrumentAgent</Premain-Class>
+                        </manifestEntries>
+                        <manifest>
+                            <mainClass>sbu.testlab.coverage.oocoverage.analysis.OCoverageLauncher</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
