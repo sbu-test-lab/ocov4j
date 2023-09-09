@@ -1,5 +1,8 @@
-# OCov4J: Object Coverage for Java
+# OCov4J: Object Coverage Metrics for Java
 A tool for measuring test code coverage based on "object code coverage" concept which is more consistent with object-oriented related issues than classic code coverage. `OCov4J` instruments your java application code through running your tests, and calculates object code coverage level for your test suites.
+
+The approach is depicted in this paper:
+[M. Ghoreshi, and H. Haghighi. "Object coverage criteria for supporting object-oriented testing." Software Quality Journal (2023)](https://link.springer.com/article/10.1007/s11219-023-09643-3).
 ## Uses example
 To use `OCov4J`, we should first use it as an `java-agent` thorogh running test execution. In this phase, the tool atache to your program-under-test and instruments your code. As an example of how to use `OCov4J`, consider your jar file contining your classes as  `your-program.jar` for which you have add a `JUnit` test calss called `MY_Test1 ` in a `my-test.java`. Now, you first attach the `OCov4J` Jar file to the Java process while executing the tests with the following command. This command executes the unit tests on class ClearableList:
 ```
