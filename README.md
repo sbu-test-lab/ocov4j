@@ -99,8 +99,89 @@ For example, the following simple test `Stack_TestSuite` leads to an `IndexOutOf
 09    }
 ```
 As shown in this example, the traditional coverage metric incorrectly assumes coverage of a class while it has not directly been tested. This condition can mislead programmers and cause them not to write separate unit tests for the `Stack` class. In the **OCov Approach**, we consider the type of the executor object in order to address this issue.
+### Why does inherited code matter?
+The classic code coverage regard the execution of each class code separately and in isolation, and do not consider the inherited parts of the parent/ancestor classes. Therefore, problems related to how the class under test interacts with the states and behaviors of the inherited classes are excluded from the scope of these criteria. To explain the issue more precisely, consider the following example containing two classes List and ClearableList. The former models a simple list backed by an array, and the latter models a simple list with an extra method, named clear, for deleting all elements of the list at once. ClearableList inherits the class List and adds the clear method to clear the list. We have seeded a bug into ClearableList by commenting the line number 7 of the class ClearableList.
+```java
+01    class List {
+02      int maxSize;
+03      Object[] items;
+04      int lastIndex;
+05      public List(size){
+06        this.maxSize=size;
+07        items=new Object[size];
+08      }
+09      public void add(Object item){
+10        if(lastIndex==maxSize) 
+11         throw new Exception(“List is full”); 
+12        items[lastIndex++]=item;
+13      }
+14      public void remove(int index){
+15        if(index<0 || index>=lastIndex) 
+16         throw new Exception(“Index out of bounds”); 
+17        for(int i=index; i<lastIndex-1; i++)
+18          items[i]=items[i+1];
+19        this.lastIndex--;
+20      }
+21      public int getSize(){
+22        return lastIndex;
+23      }
+24    }
+```
 
-## Uses example
+`ClearableList` class:
+```java
+01    class ClearableList extends List {
+02      public ClearableList(int size){
+03        super(size);
+04      }
+05      public void clear() {
+06        items =new Object[maxSize];
+07        //lastIndex=0; /* commented for bug seeding */
+08      }
+09    }
+```
+Now consider the below test suite List_TestSuite1 which contains four test cases to validate the implementations of the above classes:
+```java
+01    class List_TestSuite1 {
+02      @Test
+03      public void List_Test1(){
+04        List list=new List(10);
+05        list.add(“A”); list.add(“B”); list.remove(1);
+06        assert list.getSize()==1;
+07      }
+08      @Test(expected = Exception.class)
+09      public void List_Test2(){
+10        List list=new List(1);
+11        list.add(“A”);
+12        list.add(“B”); //the expected exception thrown and test passes
+13      }
+08      @Test(expected = Exception.class)
+09      public void List_Test3(){
+10        List list=new List(10);
+11        list.add(“A”);
+12        list.remove(2); // the expected exception thrown and test passes
+13      }
+14      @Test
+15      public void ClearableList_Test1(){
+16        ClearableList list=new ClearableList(10);
+17        list.clear();
+18        assert list.getSize()==0;
+19      }
+20    }
+```
+Test cases List_Test1, List_Test2, and List_Test3 pass and achieve 100% line coverage for class List. The ClearableList_Test1 test, which is passed too, also provides 100% line coverage for class ClearableList and cannot reveal our seeded bug. Although ClearableList_Test1 only tests the method defined in ClearableList and does not test the inherited methods (like add or remove), it results in 100% line coverage. Nevertheless, the seeded bug in the ClearableList class can easily be detected by a simple test that uses methods inherited from the parent class. For example, imagine the test case ClearableList_Test2, which is another test for the ClearableList class that, in addition to testing the child state space, tests the parent state space by calling the inherited method add. Unlike the previous test, ClearableList_Test2 is failed and reveals a failure in the implementation. Using this test, after the execution of the add method (line 4), one unit is added to the index variable; but when the method clear is called, although it resets the parent state variable elements, it does not reset the value of the parent’s state variable index (as mentioned, line 7 of ClearableList was commented to create this fault). Hence, the list length in the assertion section of the test becomes equal to one, which causes the test to fail. 
+Regarding this example, when defining our new coverage criteria, we should consider the parts of the class state and behavior, which are inherited from parent or ancestor classes.
+```java
+01      @Test
+02      public void ClearableList_Test2(){
+03        ClearableList list=new ClearableList(10);
+04        list.add(“A”);
+05        list.clear();
+06        assert list.getSize()==0;
+07      }
+```
+
+## OVOC4J Useage
 To use `OCov4J`, we should first use it as an `java-agent` thorogh running test execution. In this phase, the tool atache to your program-under-test and instruments your code. As an example of how to use `OCov4J`, consider your jar file contining your classes as  `your-program.jar` for which you have add a `JUnit` test calss called `MY_Test1 ` in a `my-test.java`. Now, you first attach the `OCov4J` Jar file to the Java process while executing the tests with the following command. This command executes the unit tests on class ClearableList:
 ```
 java -cp your-program.jar:junit.jar:<other class-path libraries may be needed for execution of your program> 
