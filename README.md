@@ -18,7 +18,7 @@ in summary:
 * **Object coverage**: This method measures the percentage of code that is executed by the exact type of object (actual type of object should be the same as the class under test) and also the inherited code of the class should be coveraged by tests to achinve high object coverage.
 
 for more academic information about these new criteria and how are effective refer to this academic paper:
-[M. Ghoreshi, and H. Haghighi. "Object coverage criteria for supporting object-oriented testing." Software Quality Journal (2023)](https://link.springer.com/article/10.1007/s11219-023-09643-3).
+* [M. Ghoreshi, and H. Haghighi. "Object coverage criteria for supporting object-oriented testing." Software Quality Journal (2023)](https://link.springer.com/article/10.1007/s11219-023-09643-3).
 
 ## Simple examples that make sence!
 ### Why does the actual type of the object matter?
