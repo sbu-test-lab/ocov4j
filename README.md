@@ -26,7 +26,8 @@ The traditional code coverage criteria only consider the static space of a class
 
 `Stack` class models a simple stack in Java. Objects from this class set the maximum stack length using the class constructor during instantiation. This class defines two `push` and `pop` methods to add/remove elements to/from the stack.
 
-**Note: Bug Seeding**, we have seeded *two bugs* by commenting lines `10-11` and `15-16` of class `Stack` that can result in failures at runtime.
+> [!IMPORTANT]
+> **Bug Seeding**: We have seeded *two bugs* by commenting lines `10-11` and `15-16` of class `Stack` that can result in failures at runtime.
 
 ```java
 01    class Stack {
@@ -105,7 +106,9 @@ The classic code coverage regard the execution of each class code separately and
 
 To explain this issue more precisely, consider the following example containing two classes List and ClearableList. The former models a simple list backed by an array, and the latter models a simple list with an extra method, named clear, for deleting all elements of the list at once. `ClearableList` inherits the class `List` and adds the `clear` method to clear the list. 
 
-**NOTE: Bug Seeding**, we have seeded a bug into `ClearableList` by commenting the line number `7` of the class `ClearableList`.
+> [!IMPORTANT]
+> **Bug Seeding**: We have seeded a bug into `ClearableList` by commenting the line number `7` of the class `ClearableList`.
+
 ```java
 01    class List {
 02      int maxSize;
