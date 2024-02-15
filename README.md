@@ -1,23 +1,23 @@
 # OCov4J: Object Coverage Metrics for Java
-**OCov4J** is a prototype tool that measures test code coverage based on the **"object code coverage or OCov concept"** . *OCov* is a set of new test coverage metrics that specifically address object-oriented programming concepts. It considers issues related to object-oriented features such as inheritance, polymorphism, and dynamic binding, in addition to traditional procedural programming concerns.
+*OCov4J* is a prototype tool that measures test code coverage based on the **"object code coverage or OCov concept"** . *OCov* is a set of new test coverage metrics that specifically address object-oriented programming concepts. It considers issues related to object-oriented features such as inheritance, polymorphism, and dynamic binding, in addition to traditional procedural programming concerns.
 
-**OCov4J** instruments your Java application code by running your tests (with JUnit or other tools) and calculates object coverage metrics for your test suites.
+*OCov4J* instruments your Java application code by running your tests (with JUnit or other tools) and calculates object coverage metrics for your test suites.
 
 ## What is Object Coverage Criteria or OCov?
 We call these new criteria **Object Coverage Criteria** or **OCov** for short. 
 
 These coverage metrics generally work similarly to traditional test coverage, with the difference that they also consider these two fact while measuring the coverage of your tests:
 
- * **OCov** considers **the actual type of the object** under test (it means **which exact type of the object** executes **which part of the code**), and 
- * **OCov** measures the coverage of **the inherited code (non-private code of parent or ancestor classes)**, in addtion to the main class code.
+ * **OCov** considers the **actual type** of the **object under test** (it means **which exact type of the object** executes **which part of the code**), and 
+ * **OCov** measures the coverage of **the inherited code** (non-private code of parent or ancestor classes), in addtion to the main class code.
 
-In contrast, the **traditional code coverage** only consider the codes that are explicitly written in the class itself. It also doesn't matter what kind of object executes them!
+In contrast, the *traditional code coverage* only consider the codes that are explicitly written in the class itself. It also doesn't matter what kind of object executes them!
 
 in summary:
 * **Traditional code coverage**: This method only measures the percentage of code that is executed by test cases. It does not consider the types of objects that execute the code of the class or the inherited code of the object from other super classes.
-* **Object coverage**: This method measures the percentage of code that is executed by the exact type of object (actual type of object should be the same as the class under test) and also the inherited code of the class should be coveraged by tests to achinve high object coverage.
+* **New Object coverage**: This method measures the percentage of code that is executed by the exact type of object (actual type of object should be the same as the class under test) and also the inherited code of the class should be covered by tests to achinve high object coverage.
 
-for more academic information about these new criteria and how are effective refer to this academic paper:
+for more academic information about these new criteria and how are effective, refer to this academic paper:
 * [M. Ghoreshi, and H. Haghighi. "Object coverage criteria for supporting object-oriented testing." Software Quality Journal (2023)](https://link.springer.com/article/10.1007/s11219-023-09643-3).
 
 ## Simple examples that make sence!
@@ -26,7 +26,7 @@ The traditional code coverage criteria only consider the static space of a class
 
 `Stack` class models a simple stack in Java. Objects from this class set the maximum stack length using the class constructor during instantiation. This class defines two `push` and `pop` methods to add/remove elements to/from the stack.
 
-**Note**: We have **seeded two bugs** by commenting lines `10-11` and `15-16` of class `Stack` that can result in failures at runtime.
+**Note: Bug Seeding**, we have seeded *two bugs* by commenting lines `10-11` and `15-16` of class `Stack` that can result in failures at runtime.
 
 ```java
 01    class Stack {
@@ -103,7 +103,9 @@ As shown in this example, the traditional coverage metric incorrectly assumes co
 ### Why does inherited code matter?
 The classic code coverage regard the execution of each class code separately and in isolation, and do not consider the inherited parts of the parent/ancestor classes. Therefore, problems related to how the class under test interacts with the states and behaviors of the inherited classes are excluded from the scope of these criteria. 
 
-To explain this issue more precisely, consider the following example containing two classes List and ClearableList. The former models a simple list backed by an array, and the latter models a simple list with an extra method, named clear, for deleting all elements of the list at once. ClearableList inherits the class List and adds the clear method to clear the list. **We have seeded a bug** into **ClearableList** by commenting the line number 7 of the class ClearableList.
+To explain this issue more precisely, consider the following example containing two classes List and ClearableList. The former models a simple list backed by an array, and the latter models a simple list with an extra method, named clear, for deleting all elements of the list at once. `ClearableList` inherits the class `List` and adds the `clear` method to clear the list. 
+
+**NOTE: Bug Seeding**, we have seeded a bug into `ClearableList` by commenting the line number `7` of the class `ClearableList`.
 ```java
 01    class List {
 02      int maxSize;
@@ -173,7 +175,7 @@ Now consider the below test suite `List_TestSuite1` which contains four test cas
 20    }
 ```
 Based on running Test cases `List_TestSuite1`:
-* Tests `List_Test1`, `List_Test2`, and `List_Test3` pass and achieve 100% line coverage for class List.
+* Tests `List_Test1`, `List_Test2`, and `List_Test3` pass and achieve 100% line coverage for class `List`.
 * The `ClearableList_Test1` test, which is passed too, also provides **100% line coverage** for class **ClearableList** and **cannot reveal our seeded bug**.
 * Although `ClearableList_Test1` only tests the method defined in `ClearableList` and does not test the inherited methods (like `add` or `remove`), it results in **100% line coverage**.
 
