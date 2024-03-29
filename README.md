@@ -1,5 +1,5 @@
 # OCov4J: Object Coverage Metrics for Java
-*OCov4J* is a prototype tool that measures test code coverage based on the **"object code coverage or OCov concept"** . *OCov* is a set of new test coverage metrics that specifically address object-oriented programming concepts. It considers issues related to object-oriented features such as inheritance, polymorphism, and dynamic binding, in addition to traditional procedural programming concerns.
+*OCov4J* is a proof-of-concept tool that measures test code coverage based on the **"object code coverage or OCov concept"** . *OCov* is a set of new test coverage metrics that specifically address object-oriented programming concepts. It considers issues related to object-oriented features such as inheritance, polymorphism, and dynamic binding, in addition to traditional procedural programming concerns.
 
 *OCov4J* instruments your Java application code by running your tests (with JUnit or other tools) and calculates object coverage metrics for your test suites.
 
